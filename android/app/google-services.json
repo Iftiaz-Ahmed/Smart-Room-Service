@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "228000152440",
+    "project_id": "smart-room-service",
+    "storage_bucket": "smart-room-service.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228000152440:android:aa6c9bf05d77bab27ee68d",
+        "android_client_info": {
+          "package_name": "com.restaurant.hhotel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "228000152440-nslhrumibmfunpadj24us7g345jot5m8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB64gFjm__b9YZYTR-LW8rTK551KVqbfOk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "228000152440-nslhrumibmfunpadj24us7g345jot5m8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
