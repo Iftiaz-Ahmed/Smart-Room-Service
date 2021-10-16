@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hhotel/provider/auth_bloc.dart';
+import 'package:hhotel/provider/restaurant_bloc.dart';
 import 'package:hhotel/screens/login_page.dart';
 import 'package:hhotel/screens/menu.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<AuthBloc>.value(value: AuthBloc()),
+    ChangeNotifierProvider<RestaurantBloc>.value(value: RestaurantBloc()),
   ], child: MyApp()));
 }
 

@@ -37,6 +37,7 @@ dependencies:
   cloud_firestore: ^2.5.3
   shared_preferences: ^2.0.8
   badges: ^2.0.1
+  masonry_grid: ^1.0.0
 
 dev_dependencies:
   flutter_test:

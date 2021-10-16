@@ -36,4 +36,20 @@ class FirebaseApi {
 
     return result;
   }
+
+  Future<List> getFoodList(String mealType) {
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    List foodList = [];
+    var result = _firestore
+        .collection("restaurant")
+        .where("meal", isEqualTo: mealType)
+        .get();
+
+    return result.then((value) {
+      for (var element in value.docs) {
+        foodList.add(element);
+      }
+      return foodList;
+    });
+  }
 }

@@ -1,6 +1,10 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:hhotel/provider/restaurant_bloc.dart';
 import 'package:hhotel/services/firebase_api.dart';
+import 'package:provider/provider.dart';
+
+import 'food_list.dart';
 
 class RestaurantPage extends StatefulWidget {
   const RestaurantPage({Key? key}) : super(key: key);
@@ -33,6 +37,8 @@ class _RestaurantPageState extends State<RestaurantPage> {
 
   @override
   Widget build(BuildContext context) {
+    RestaurantBloc _restaurantBloc = Provider.of<RestaurantBloc>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Meal Categories"),
@@ -42,8 +48,8 @@ class _RestaurantPageState extends State<RestaurantPage> {
             child: IconButton(
               onPressed: () async {},
               icon: Badge(
-                  badgeContent: const Text(
-                    '0',
+                  badgeContent: Text(
+                    _restaurantBloc.cartCounter.toString(),
                     style: TextStyle(color: Colors.white),
                   ),
                   child: const Icon(Icons.shopping_cart)),
@@ -61,23 +67,35 @@ class _RestaurantPageState extends State<RestaurantPage> {
                 crossAxisCount: 1),
             itemCount: foodTypes.length,
             itemBuilder: (BuildContext ctx, index) {
-              return Container(
-                alignment: Alignment.center,
-                child: Text(
-                  foodTypes[index]['name'],
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                      letterSpacing: 2,
-                      backgroundColor: Colors.black.withOpacity(0.7)),
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Foodlist(
+                                mealType: foodTypes[index]['name']
+                                    .toString()
+                                    .toLowerCase(),
+                              )));
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    foodTypes[index]['name'],
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        letterSpacing: 2,
+                        backgroundColor: Colors.black.withOpacity(0.7)),
+                  ),
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(foodTypes[index]['image']),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(15)),
                 ),
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(foodTypes[index]['image']),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(15)),
               );
             }),
       ),
