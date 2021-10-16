@@ -1,8 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hhotel/provider/auth_bloc.dart';
+import 'package:hhotel/screens/login_page.dart';
 import 'package:hhotel/screens/restaurant.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -26,11 +31,21 @@ class _MenuState extends State<Menu> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   var item;
+  String roomNumber = "";
+
+  getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? values = prefs.getStringList("creds");
+    setState(() {
+      roomNumber = values![0];
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getUsername();
     firestore.collection("restaurant").get().then((value) {
       value.docs.forEach((element) {
         print(element.data());
@@ -41,6 +56,8 @@ class _MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
+    AuthBloc _auth = Provider.of<AuthBloc>(context);
+
     var menuTextStyle = TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.bold,
@@ -53,14 +70,51 @@ class _MenuState extends State<Menu> {
         title: const Text(
           'Smart Room Service',
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: IconButton(
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove("creds");
+                _auth.isLogged = false;
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    (Route<dynamic> route) => false);
+              },
+              icon: const Icon(Icons.logout),
+            ),
+          )
+        ],
       ),
       body: Column(
         children: [
-          Image.asset(
-            "assets/images/hotel.jpg",
-            height: 150,
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.cover,
+          Stack(
+            children: [
+              Image.asset(
+                "assets/images/hotel.jpg",
+                height: 150,
+                width: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+              ),
+              Container(
+                height: 150,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.black.withOpacity(0.5),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Room Number - $roomNumber",
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 28,
+                        fontFamily: 'cursive',
+                        letterSpacing: 3),
+                  ),
+                ),
+              )
+            ],
           ),
           Flexible(
             child: Container(

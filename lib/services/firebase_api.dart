@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseApi {
-  Future<String> login(String roomNumber, String password) {
+  Future<String> login(String roomNumber, String password) async {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String message = "";
     var result = _firestore
         .collection("users")
@@ -16,6 +19,7 @@ class FirebaseApi {
       } else {
         value.docs.forEach((element) {
           if (password == element['password']) {
+            prefs.setStringList("creds", [roomNumber, password]);
             message = "Login Successful!";
           } else {
             message = "Invalid credentials!";

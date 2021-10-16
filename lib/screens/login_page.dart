@@ -8,6 +8,7 @@ import 'package:hhotel/provider/auth_bloc.dart';
 import 'package:hhotel/screens/menu.dart';
 import 'package:hhotel/services/firebase_api.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,6 +22,50 @@ class _LoginPageState extends State<LoginPage> {
   final pass = new TextEditingController();
   final email = new TextEditingController();
   bool _newPasswordVisible = true;
+  bool initialized = false;
+
+  checkLogin(_auth) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    FirebaseApi _firebaseApi = FirebaseApi();
+
+    List<String>? creds = prefs.getStringList("creds");
+    if (mounted) {
+      if (creds != null) {
+        _auth.loading = true;
+        _firebaseApi.login(creds[0], creds[1]).then((value) {
+          if (value == "Login Successful!") {
+            _auth.isLogged = true;
+            Fluttertoast.showToast(
+                msg: value,
+                backgroundColor: Colors.green,
+                gravity: ToastGravity.BOTTOM);
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => const Menu()));
+          } else {
+            _auth.isLogged = false;
+            Fluttertoast.showToast(
+                msg: value,
+                backgroundColor: Colors.red,
+                gravity: ToastGravity.BOTTOM);
+          }
+        }).whenComplete(() {
+          _auth.loading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    AuthBloc _auth = Provider.of<AuthBloc>(context);
+    if (!initialized) {
+      setState(() {
+        initialized = true;
+      });
+      checkLogin(_auth);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +298,7 @@ class _LoginPageState extends State<LoginPage> {
                                           color: Colors.white),
                                     ),
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.deepOrange,
+                                  primary: Colors.blueGrey[600],
                                   onPrimary: Colors.white,
                                   shape: const StadiumBorder(),
                                   padding: const EdgeInsets.symmetric(
